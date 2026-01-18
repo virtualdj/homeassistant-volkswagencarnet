@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+set -e
+
+cd "$(dirname "$0")/../.."
+
+# Kill Home Assistant if it's running
+if pgrep hass; then pkill hass; fi
+
+# Delete files in 'config' folder except 'configuration.yaml'
+find config -mindepth 1 ! -name 'configuration.yaml' -exec rm -rf {} +
+echo "Configuration cleared."

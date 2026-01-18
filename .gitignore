@@ -1,3 +1,12 @@
 .idea
 __pycache__
 .DS_Store
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Home Assistant Config
+/config/*
+!/config/configuration.yaml

@@ -1,0 +1,37 @@
+# Example configuration.yaml entry
+# Do not use default_config
+# default_config:
+# But enable the single components instead:
+backup:
+config:
+energy:
+history:
+homeassistant_alerts:
+logbook:
+my:
+sun:
+webhook:
+
+logger:
+  default: info
+  logs:
+    homeassistant.setup: warning
+    custom_components.volkswagencarnet: debug
+
+# Disable ffmpeg
+ffmpeg:
+  ffmpeg_bin: /usr/bin/true
+
+# Run with debugpy and wait for debugger to connect
+# debugpy:
+#   start: true
+#   wait: true
+
+# Enable this part if you want to use CodeSpaces
+http:
+  use_x_forwarded_for: true
+  trusted_proxies:
+    - ::1
+    - 127.0.0.1
+  ip_ban_enabled: true
+  login_attempts_threshold: 3

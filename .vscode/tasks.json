@@ -1,0 +1,71 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Run Home Assistant Core",
+      "type": "shell",
+      "command": ".devcontainer/scripts/develop",
+      "problemMatcher": []
+    },
+    {
+      "label": "Stop Home Assistant Core",
+      "type": "shell",
+      "command": "pkill hass ; exit 0",
+      "problemMatcher": []
+    },
+    {
+      "label": "Restart Home Assistant Core",
+      "type": "shell",
+      "command": "pkill hass ; .devcontainer/scripts/develop",
+      "problemMatcher": []
+    },
+    {
+      "label": "Show Home Assistant version",
+      "type": "shell",
+      "command": "clear ; echo -e \"The installed Home Assistant version is $(hass --version).\\n\"",
+      "problemMatcher": []
+    },
+    {
+      "label": "Clear Home Assistant config",
+      "type": "shell",
+      "command": ".devcontainer/scripts/clear-config",
+      "problemMatcher": []
+    },
+    {
+      "label": "Upgrade Home Assistant to latest (stable)",
+      "type": "shell",
+      "command": ".devcontainer/scripts/upgrade",
+      "problemMatcher": []
+    },
+    {
+      "label": "Upgrade Home Assistant to latest (beta)",
+      "type": "shell",
+      "command": ".devcontainer/scripts/upgrade --prerelease",
+      "problemMatcher": []
+    },
+    {
+      "label": "Load Home Assistant from github - dev branch",
+      "type": "shell",
+      "command": ".devcontainer/scripts/dev-branch",
+      "problemMatcher": []
+    },
+    {
+      "label": "Load specific version of Home Assistant",
+      "type": "shell",
+      "command": ".devcontainer/scripts/specific-version",
+      "problemMatcher": []
+    },
+    {
+      "label": "Lint with ruff",
+      "type": "shell",
+      "command": ".devcontainer/scripts/lint",
+      "problemMatcher": []
+    },
+    {
+      "label": "Type-check with mypy",
+      "type": "shell",
+      "command": ".devcontainer/scripts/type-check",
+      "problemMatcher": []
+    }
+  ]
+}
