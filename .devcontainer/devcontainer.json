@@ -1,6 +1,8 @@
 {
   "name": "Home Assistant Integration Dev",
-  "image": "mcr.microsoft.com/devcontainers/python:3.13-bookworm",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
   "postCreateCommand": ".devcontainer/scripts/setup",
   "containerEnv": {
     "PYTHONASYNCIODEBUG": "1"
@@ -55,6 +57,11 @@
   "features": {
     //"ghcr.io/devcontainers/features/rust:1": {}
     //"ghcr.io/devcontainers-contrib/features/ffmpeg-apt-get:1": {}
+    "ghcr.io/devcontainers/features/common-utils:2": {
+      "installZsh": false,
+      "installOhMyZsh": false,
+      "upgradePackages": false
+    },
     "ghcr.io/devcontainers-extra/features/apt-packages:1": {
         "packages": [
           "ffmpeg",

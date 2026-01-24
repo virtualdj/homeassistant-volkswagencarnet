@@ -4,10 +4,6 @@ set -e
 
 cd "$(dirname "$0")/../.."
 
-# Install libpcap and libturbojpeg to avoid errors in Home Assistant
-sudo apt-get update
-sudo apt-get install -y libpcap-dev libturbojpeg0
-
 # Install uv
 python3 -m pip install uv --user --disable-pip-version-check
 
