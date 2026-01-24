@@ -10,4 +10,7 @@ mutagen
 hassil
 home_assistant_intents
 numpy
+pyturbojpeg
+pymicro-vad
+pyspeex_noise
 homeassistant
