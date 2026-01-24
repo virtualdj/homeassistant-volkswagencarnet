@@ -10,3 +10,6 @@ dmypy.json
 # Home Assistant Config
 /config/*
 !/config/configuration.yaml
+
+# volkswagencarnet library
+/libs/volkswagencarnet
