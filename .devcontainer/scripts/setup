@@ -5,12 +5,13 @@ set -e
 cd "$(dirname "$0")/../.."
 
 # Install uv
-###python3 -m pip install uv --user --disable-pip-version-check
+python3 -m pip install uv --user --disable-pip-version-check
 
 # Install Home Assistant dependencies
-###uv pip install --system --prefix "/home/vscode/.local/" --requirement requirements.ha.txt
+uv pip install --system --prefix "/home/vscode/.local/" --requirement requirements.ha.txt
 
 # Install the 'volkswagencarnet' library dependency
+# Function to remove the volkswagencarnet submodule
 remove_submodule() {
     git submodule deinit -f libs/volkswagencarnet 2> /dev/null || true
     git rm -f libs/volkswagencarnet 2> /dev/null || true
@@ -20,57 +21,68 @@ remove_submodule() {
     git config --remove-section submodule.libs/volkswagencarnet 2> /dev/null || true
 }
 
-# Get GitHub username from git remote URL
-SUBMODULE=1
-GIT_USER=$(git remote get-url origin | sed -r 's/.*(\@|\/\/)(.*)(\:|\/)([^:\/]*)\/([^\/\.]*)\.git/\4/')
-if [ ! -z "$GIT_USER" ]; then
-    # Clone the user's fork to a submodule
-    echo "Cloning volkswagencarnet lib from user fork: $GIT_USER..."
-    git submodule add -f https://github.com/$GIT_USER/volkswagencarnet.git libs/volkswagencarnet || SUBMODULE=0
+# Check if the folder already exists
+if [ -d "libs/volkswagencarnet" ]; then
+    # Library module already created, skip cloning
+    echo "volkswagencarnet submodule already exists. Skipping clone."
+
+    # Install volkswagencarnet dependency from the folder
+    echo "Installing volkswagencarnet lib from submodule..."
+    pip install -e /workspaces/homeassistant-volkswagencarnet/libs/volkswagencarnet/
 else
-    SUBMODULE=0
-fi
-
-# Check if cloning the user's fork failed
-if [ $SUBMODULE -eq 0 ]; then
-    # Remove the failed submodule
-    echo "Failed to clone user fork. Cloning upstream instead.."
-    remove_submodule
-
-    # Get the upstream GitHub username
+    # Folder does not exist, attempt to clone the submodule
+    # Get GitHub username from git remote URL
     SUBMODULE=1
-    GIT_USER=$(git remote get-url upstream | sed -r 's/.*(\@|\/\/)(.*)(\:|\/)([^:\/]*)\/([^\/\.]*)\.git/\4/')
+    GIT_USER=$(git remote get-url origin | sed -r 's/.*(\@|\/\/)(.*)(\:|\/)([^:\/]*)\/([^\/\.]*)\.git/\4/')
     if [ ! -z "$GIT_USER" ]; then
-        # Clone the upstream repository
-        echo "Cloning volkswagencarnet lib from upstream: $GIT_USER..."
+        # Clone the user's fork to a submodule
+        echo "Cloning volkswagencarnet lib from user fork: $GIT_USER..."
         git submodule add -f https://github.com/$GIT_USER/volkswagencarnet.git libs/volkswagencarnet || SUBMODULE=0
     else
         SUBMODULE=0
     fi
-fi
 
-# Use the submodule if it exists
-if [ $SUBMODULE -eq 1 ]; then
-    # Set git to ignore changes in the submodule
-    git config -f .gitmodules submodule.libs/volkswagencarnet.ignore all
-    git submodule update --init --recursive
+    # Check if cloning the user's fork failed
+    if [ $SUBMODULE -eq 0 ]; then
+        # Remove the failed submodule
+        echo "Failed to clone user fork. Cloning upstream instead.."
+        remove_submodule
 
-    # Reset git status for the submodule to avoid dirty state
-    ###git restore --staged libs/volkswagencarnet
-    grep -qxF ".gitmodules" .git/info/exclude || echo ".gitmodules" >> .git/info/exclude
-    git restore --staged .gitmodules
+        # Get the upstream GitHub username
+        SUBMODULE=1
+        GIT_USER=$(git remote get-url upstream | sed -r 's/.*(\@|\/\/)(.*)(\:|\/)([^:\/]*)\/([^\/\.]*)\.git/\4/')
+        if [ ! -z "$GIT_USER" ]; then
+            # Clone the upstream repository
+            echo "Cloning volkswagencarnet lib from upstream: $GIT_USER..."
+            git submodule add -f https://github.com/$GIT_USER/volkswagencarnet.git libs/volkswagencarnet || SUBMODULE=0
+        else
+            SUBMODULE=0
+        fi
+    fi
 
-    # Install volkswagencarnet dependency from the submodule
-    echo "Installing volkswagencarnet lib from submodule..."
-    pip install -e /workspaces/homeassistant-volkswagencarnet/libs/volkswagencarnet/
-else
-    # Cloning the upstream also failed, remove the submodule
-    echo "Failed to clone upstream repository. Removing submodule..."
-    remove_submodule
+    # Use the submodule if it exists
+    if [ $SUBMODULE -eq 1 ]; then
+        # Set git to ignore changes in the submodule
+        git config -f .gitmodules submodule.libs/volkswagencarnet.ignore all
+        git submodule update --init --recursive
 
-    # Revert to installing from pip if the submodule is not available as a submodule
-    echo "Installing volkswagencarnet lib from pip..."
-    uv pip install --system --prefix "/home/vscode/.local/" --requirement requirements.txt
+        # Reset git status for the submodule to avoid dirty state
+        ###git restore --staged libs/volkswagencarnet
+        grep -qxF ".gitmodules" .git/info/exclude || echo ".gitmodules" >> .git/info/exclude
+        git restore --staged .gitmodules
+
+        # Install volkswagencarnet dependency from the submodule
+        echo "Installing volkswagencarnet lib from submodule..."
+        pip install -e /workspaces/homeassistant-volkswagencarnet/libs/volkswagencarnet/
+    else
+        # Cloning the upstream also failed, remove the submodule
+        echo "Failed to clone upstream repository. Removing submodule..."
+        remove_submodule
+
+        # Revert to installing from pip if the submodule is not available as a submodule
+        echo "Installing volkswagencarnet lib from pip..."
+        uv pip install --system --prefix "/home/vscode/.local/" --requirement requirements.txt
+    fi
 fi
 
 # Set workspace directory as safe in git
